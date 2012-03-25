@@ -33,8 +33,8 @@ void derive(const normal_sample & xs, string index = "") {
     endl << "CI for mean: " << xs.ci() <<
     endl << "             " << ssd << " = " << uss << " - " << sum << SQ" / " << n << " = " << xs.uss() << " - " << xs.sum() << SQ" / " << xs.n() << " = " << xs.ssd() <<
     endl << "Variance:    " << var << " = 1 / (" << n << " - 1) * " << ssd << " = " << xs.variance() <<
-    endl << "CI for var.: " << xs.ci_variance() <<
     endl;
+    xs.ci_variance();
 }
 
 void more_than_two_samples(vector<normal_sample> & samples) {

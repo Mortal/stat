@@ -110,7 +110,7 @@ struct normal_sample {
     ci_t ci(double alpha = 0.05) const;
 
     // Confidence interval for the variance. biogeostat p. 62
-    ci_t ci_variance(double alpha = 0.05) const;
+    ci_t ci_variance(double alpha = 0.05, bool loud = true) const;
 
     inline normal_sample operator+(const normal_sample & ys) {
 	return normal_sample(n()+ys.n(), sum()+ys.sum(), uss()+ys.uss());

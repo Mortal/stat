@@ -40,7 +40,7 @@ ci_t normal_sample::ci(double alpha) const {
 }
 
 // Confidence interval for the variance. biogeostat p. 62
-ci_t normal_sample::ci_variance(double alpha) const {
+ci_t normal_sample::ci_variance(double alpha, bool loud) const {
     boost::math::chi_squared_distribution<double> dist(static_cast<double>(freedom()));
     double left_quantile = quantile(dist, 1-alpha/2);
     double right_quantile = quantile(dist, alpha/2);

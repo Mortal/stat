@@ -141,12 +141,41 @@ void go(vector<normal_sample> samples) {
     return more_than_two_samples(samples);
 }
 
+void go_variance() {
+    double var_x, var_y;
+    size_t freedom_x, freedom_y;
+    cout << "Test common variance in two samples." <<
+    endl << "First sample." <<
+    endl << 's' << SQ << " = " << flush;
+    if (!(cin >> var_x)) return;
+    cout << "f = " << flush;
+    if (!(cin >> freedom_x)) return;
+    cout << "Second sample." <<
+    endl << 's' << SQ << " = " << flush;
+    if (!(cin >> var_y)) return;
+    cout << "f = " << flush;
+    if (!(cin >> freedom_y)) return;
+    double p_obs = common_variance(var_x, var_y, freedom_x, freedom_y);
+    cout << "p_obs = " << p_obs << endl;
+}
+
 int main(int argc, char ** argv) {
     cout << "This is stattest built from " << git_refspec << " (commit " << git_commit << ")" << endl << endl;
     bool observations = false;
-    if (argc > 1 && string(argv[1]) == "--obs")
-	observations = true;
-    go(observations ? get_observations() : get_input());
+    bool variance = false;
+    if (argc > 1) {
+	string arg(argv[1]);
+	if (arg == "--obs")
+	    observations = true;
+	else if (arg == "--variance")
+	    variance = true;
+    }
+
+    if (variance)
+	go_variance();
+    else
+	go(observations ? get_observations() : get_input());
+
     display_results();
     return 0;
 }

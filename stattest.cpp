@@ -4,6 +4,7 @@
 #include <sstream>
 #include "stat.h"
 #include "portability.h"
+#include "sysinfo.h"
 
 using namespace std;
 
@@ -127,6 +128,7 @@ void go(vector<normal_sample> samples) {
 }
 
 int main(int argc, char ** argv) {
+    cout << git_commit << ' ' << git_refspec << endl;
     bool observations = false;
     if (argc > 1 && string(argv[1]) == "--obs")
 	observations = true;

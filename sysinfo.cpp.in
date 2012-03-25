@@ -1,0 +1,7 @@
+// http://stackoverflow.com/a/4318642
+
+#define GIT_COMMIT "@GIT_COMMIT@"
+#define GIT_REFSPEC "@GIT_REFSPEC@"
+const char * git_commit = GIT_COMMIT;
+const char * git_refspec = GIT_REFSPEC;
+// vim: set sw=4 sts=4 ts=8 noet:

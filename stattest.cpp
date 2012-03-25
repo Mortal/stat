@@ -38,7 +38,8 @@ void derive(const normal_sample & xs, string index = "") {
 }
 
 void more_than_two_samples(vector<normal_sample> & samples) {
-    cout << "Testing the hypothesis of a common variance in more than two samples." <<
+    cout << endl << string(79, '=') <<
+    endl << "Testing the hypothesis of a common variance in more than two samples." <<
     endl << "H_0"SIGMASQ" : "SIGMA << sub("(1)") << SQ" = ... = "SIGMA << char_subscript('(') << sub(samples.size()) << char_subscript(')') << SQ" = "SIGMASQ << endl;
 
     pair<double,double> v = common_variance(samples);
@@ -47,6 +48,7 @@ void more_than_two_samples(vector<normal_sample> & samples) {
 	cout << SIGMASQ" <- s"SQ" = " << setprecision(5) << v.first << "\n\n";
 	normal_sample zs = normal_sample::sum(samples.begin(), samples.end());
 	cout << "95% confidence interval for the variance (biogeostat p. 104): " << zs.ci_variance() << '\n';
+	cout << endl << string(79, '=') << endl;
 	pair<double, double> m = common_mean(samples);
 	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
 	if (m.second >= 0.05) {
@@ -59,7 +61,8 @@ void more_than_two_samples(vector<normal_sample> & samples) {
 }
 
 void two_samples(normal_sample & xs, normal_sample & ys) {
-    cout << "Testing the hypothesis of a common variance in two samples." <<
+    cout << endl << string(79, '=') <<
+    endl << "Testing the hypothesis of a common variance in two samples." <<
     endl << "H_0"SIGMASQ" : "SIGMA << sub("(1)") << SQ" = "SIGMA << sub("(2)") << SQ" = "SIGMASQ << endl;
 
     pair<double,double> v = common_variance(xs, ys);
@@ -70,8 +73,9 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
 	normal_samples zs = xs+ys;
 	cout << "95% confidence interval for the variance (biogeostat p. 61): " << setprecision(5) << zs.ci_variance() << '\n';
 	pair<double,double> m = common_mean(xs, ys);
-	cout << "Test of common mean:\n";
-	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
+	cout << endl << string(79, '=') <<
+	endl << "Test of common mean:\n" <<
+	endl << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
 	if (m.second >= 0.05) {
 	    cout << MU" <- m = " << m.first << "\n\n";
 	    cout << "Single sample data: " << zs << endl;

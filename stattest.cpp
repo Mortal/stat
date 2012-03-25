@@ -72,10 +72,9 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
 	cout << SIGMASQ" <- s"SQ" = " << setprecision(5) << v.first << "\n\n";
 	normal_samples zs = xs+ys;
 	cout << "95% confidence interval for the variance (biogeostat p. 61): " << setprecision(5) << zs.ci_variance() << '\n';
+	cout << endl << string(79, '=') << endl;
 	pair<double,double> m = common_mean(xs, ys);
-	cout << endl << string(79, '=') <<
-	endl << "Test of common mean:\n" <<
-	endl << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
+	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
 	if (m.second >= 0.05) {
 	    cout << MU" <- m = " << m.first << "\n\n";
 	    cout << "Single sample data: " << zs << endl;
@@ -84,10 +83,11 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
     }
 }
 
-vector<normal_sample> get_observations() {
-    cout << "Input sample observations." <<
-    endl << "Separate samples with blank lines, end with " << eof_keystroke << "." <<
-    endl;
+vector<normal_sample> get_observations(bool prompt) {
+    if (prompt)
+	cout << "Input sample observations." <<
+	endl << "Separate samples with blank lines, end with " << eof_keystroke << "." <<
+	endl;
 
     vector<normal_sample> samples;
     normal_sample xs;
@@ -109,17 +109,17 @@ vector<normal_sample> get_observations() {
     return samples;
 }
 
-vector<normal_sample> get_input() {
-    cout << "Input cumulative sample data." <<
-    endl << "n is the number of observations, S is the sum of observations," <<
-    endl << "USS is the sum of the squares of the observations." <<
-    endl << "End with " << eof_keystroke << '.' <<
-    endl;
+vector<normal_sample> get_input(bool prompt) {
+    if (prompt)
+	cout << "Input cumulative sample data." <<
+	endl << "n is the number of observations, S is the sum of observations," <<
+	endl << "USS is the sum of the squares of the observations." <<
+	endl << "End with " << eof_keystroke << '.' <<
+	endl;
 
     vector<normal_sample> samples;
     normal_sample xs;
     size_t i = 1;
-    bool prompt = is_interactive();
     while (read_cumulative_sample_data(xs, i, prompt)) {
 	samples.push_back(xs);
 	++i;
@@ -141,20 +141,29 @@ void go(vector<normal_sample> samples) {
     return more_than_two_samples(samples);
 }
 
-void go_variance() {
+void go_variance(bool prompt) {
     double var_x, var_y;
     size_t freedom_x, freedom_y;
-    cout << "Test common variance in two samples." <<
-    endl << "First sample." <<
-    endl << 's' << SQ << " = " << flush;
+
+    if (prompt)
+	cout << "Test common variance in two samples." <<
+	endl << "First sample." <<
+	endl << 's' << SQ << " = " << flush;
     if (!(cin >> var_x)) return;
-    cout << "f = " << flush;
+
+    if (prompt)
+	cout << "f = " << flush;
     if (!(cin >> freedom_x)) return;
-    cout << "Second sample." <<
-    endl << 's' << SQ << " = " << flush;
+
+    if (prompt)
+	cout << "Second sample." <<
+	endl << 's' << SQ << " = " << flush;
     if (!(cin >> var_y)) return;
-    cout << "f = " << flush;
+
+    if (prompt)
+	cout << "f = " << flush;
     if (!(cin >> freedom_y)) return;
+
     double p_obs = common_variance(var_x, var_y, freedom_x, freedom_y);
     cout << "p_obs = " << p_obs << endl;
 }
@@ -209,9 +218,9 @@ int main(int argc, char ** argv) {
     operation o = get_operation(argc, argv);
 
     if (o.variance)
-	go_variance();
+	go_variance(is_interactive());
     else
-	go(o.observations ? get_observations() : get_input());
+	go(o.observations ? get_observations(is_interactive()) : get_input(is_interactive()));
 
     display_results();
     return 0;

@@ -159,22 +159,32 @@ void go_variance() {
     cout << "p_obs = " << p_obs << endl;
 }
 
-int main(int argc, char ** argv) {
-    cout << "This is stattest built from " << git_refspec << " (commit " << git_commit << ")" << endl << endl;
-    bool observations = false;
-    bool variance = false;
+struct operation {
+    operation() : observations(false), variance(false) {}
+    bool observations;
+    bool variance;
+};
+
+operation get_operation(int argc, char ** argv) {
+    operation result;
     if (argc > 1) {
 	string arg(argv[1]);
 	if (arg == "--obs")
-	    observations = true;
+	    result.observations = true;
 	else if (arg == "--variance")
-	    variance = true;
+	    result.variance = true;
     }
+    return result;
+}
 
-    if (variance)
+int main(int argc, char ** argv) {
+    cout << "This is stattest built from " << git_refspec << " (commit " << git_commit << ")" << endl << endl;
+    operation o = get_operation(argc, argv);
+
+    if (o.variance)
 	go_variance();
     else
-	go(observations ? get_observations() : get_input());
+	go(o.observations ? get_observations() : get_input());
 
     display_results();
     return 0;

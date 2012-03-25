@@ -2,6 +2,7 @@
 #include <boost/math/distributions/fisher_f.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
 #include <sstream>
+#include <limits>
 
 #include "stat.h"
 
@@ -31,7 +32,7 @@ std::string sub(std::string s) {
 
 // Confidence interval for the mean. biogeostat p. 61
 ci_t normal_sample::ci(double alpha) const {
-    if (freedom() < 2) return std::make_pair(-1.0/0.0, 1.0/0.0);
+    if (freedom() < 2) return std::make_pair(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
     boost::math::students_t dist(freedom());
     double T = quantile(complement(dist, alpha / 2));
     double w = T * stddev() / sqrt(n());

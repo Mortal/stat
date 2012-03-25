@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <sstream>
 #include "stat.h"
+#include "portability.h"
 
 using namespace std;
 
@@ -103,7 +104,7 @@ vector<normal_sample> get_input() {
     vector<normal_sample> samples;
     normal_sample xs;
     size_t i = 1;
-    bool prompt = isatty(0);
+    bool prompt = is_interactive();
     while (read_cumulative_sample_data(xs, i, prompt)) {
 	samples.push_back(xs);
 	++i;

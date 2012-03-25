@@ -5,6 +5,7 @@
 #include "stat.h"
 #include "portability.h"
 #include "sysinfo.h"
+#include "distributions.h"
 
 using namespace std;
 
@@ -169,9 +170,10 @@ void go_variance(bool prompt) {
 }
 
 struct operation {
-    operation() : observations(false), variance(false) {}
+    operation() : observations(false), variance(false), calculate(false) {}
     bool observations;
     bool variance;
+    bool calculate;
 };
 
 operation get_operation(int argc, char ** argv) {
@@ -189,14 +191,15 @@ operation get_operation(int argc, char ** argv) {
 	endl << "  2. Test common variance and mean in two or more samples" <<
 	endl << "     given observations." <<
 	endl << "  3. Test common variance in two samples" <<
-	endl << "     given the observed variance and number of degrees of freedom." << endl <<
-	endl << "Choose one [123]: " << flush;
+	endl << "     given the observed variance and number of degrees of freedom." <<
+	endl << "  4. Lookup distribution fractiles and CDF." << endl <<
+	endl << "Choose one [1234]: " << flush;
 	size_t modus = 1;
 	string line;
 	if (getline(cin, line)) {
 	    stringstream ss(line);
 	    ss >> modus;
-	    if (modus < 1 || modus > 3) {
+	    if (modus < 1 || modus > 4) {
 		cout << "Modus out of bounds";
 		modus = 1;
 	    }
@@ -208,9 +211,59 @@ operation get_operation(int argc, char ** argv) {
 	    case 3:
 		result.variance = true;
 		break;
+	    case 4:
+		result.calculate = true;
 	}
     }
     return result;
+}
+
+void go_calculate() {
+    while (true) {
+	cout << "Choose a function." <<
+	endl << "  1. Quantile of the Student's t-distribution" <<
+	endl << "  2. Quantile of the Chi squared distribution" <<
+	endl << "  3. Cumulative distribution function of the Fisher's F-distribution" <<
+	endl << "  4. Cumulative distribution function of the Student's t-distribution" <<
+	endl << "  5. Cumulative distribution function of the Chi squared distribution" << endl <<
+	endl << "Choose one [12345]: " << flush;
+	size_t choice;
+	if (!(cin >> choice)) return;
+	size_t f1, f2;
+	if (choice == 3) {
+	    cout << "Number of degrees of freedom in the numerator: " << flush;
+	    if (!(cin >> f1)) return;
+	    cout << "Number of degrees of freedom in the denominator: " << flush;
+	    if (!(cin >> f2)) return;
+	} else {
+	    cout << "Number of degrees of freedom: " << flush;
+	    if (!(cin >> f1)) return;
+	}
+	double x;
+	cout << "Input: " << flush;
+	if (!(cin >> x)) return;
+	double result;
+	switch (choice) {
+	    case 1:
+		result = quantile_students_t(f1, x);
+		break;
+	    case 2:
+		result = quantile_chi_squared(f1, x);
+		break;
+	    case 3:
+		result = cdf_fisher_f(f1, f2, x);
+		break;
+	    case 4:
+		result = cdf_students_t(f1, x);
+		break;
+	    case 5:
+		result = cdf_chi_squared(f1, x);
+		break;
+	    default:
+		return;
+	}
+	cout << fixed << setprecision(7) << result << endl;
+    }
 }
 
 int main(int argc, char ** argv) {
@@ -219,6 +272,8 @@ int main(int argc, char ** argv) {
 
     if (o.variance)
 	go_variance(is_interactive());
+    else if (o.calculate)
+	go_calculate();
     else
 	go(o.observations ? get_observations(is_interactive()) : get_input(is_interactive()));
 

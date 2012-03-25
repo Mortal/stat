@@ -173,6 +173,33 @@ operation get_operation(int argc, char ** argv) {
 	    result.observations = true;
 	else if (arg == "--variance")
 	    result.variance = true;
+    } else if (is_interactive()) {
+	cout << endl << "Select mode of operation:" <<
+	endl << "  1. Test common variance and mean in two or more samples" <<
+	endl << "     given standard calculations." <<
+	endl << "  2. Test common variance and mean in two or more samples" <<
+	endl << "     given observations." <<
+	endl << "  3. Test common variance in two samples" <<
+	endl << "     given the observed variance and number of degrees of freedom." << endl <<
+	endl << "Choose one [123]: " << flush;
+	size_t modus = 1;
+	string line;
+	if (getline(cin, line)) {
+	    stringstream ss(line);
+	    ss >> modus;
+	    if (modus < 1 || modus > 3) {
+		cout << "Modus out of bounds";
+		modus = 1;
+	    }
+	}
+	switch (modus) {
+	    case 2:
+		result.observations = true;
+		break;
+	    case 3:
+		result.variance = true;
+		break;
+	}
     }
     return result;
 }

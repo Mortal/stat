@@ -53,9 +53,12 @@ ci_t normal_sample::ci_variance(double alpha, bool loud) const {
 
 double common_variance(double var_x, double var_y, size_t freedom_x, size_t freedom_y, bool loud) {
     if (var_x < var_y) return common_variance(var_y, var_x, freedom_y, freedom_x, loud);
-    if (loud) std::cout << "Test of common variance:" << std::endl;
     double F = var_x / var_y;
-    // TODO: how is this calculated? page ref
+    if (loud)
+	std::cout << "Test of common variance: H_0" << SIGMASQ << ": " << SIGMASQ << sub(1) << " = " << SIGMASQ << sub(2) <<
+	std::endl << "F = s" << sub(1) << SQ << "/s" << sub(2) << SQ << " (biogeostat p. 87)" <<
+	std::endl << "  = " << var_x << "/" << var_y << " = " << F <<
+	std::endl;
     if (loud) std::cout << "Test statistic: F = " << F << std::endl;
     double cdf = 1-cdf_fisher_f(freedom_x, freedom_y, F);
     double p_obs = 2*cdf;
@@ -69,6 +72,13 @@ std::pair<double, double> common_mean(const normal_sample & first, const normal_
     double t = (first.mean() - second.mean())/sqrt(variance*(1.0/first.n() + 1.0/second.n()));
     double p_obs = 2*(1-cdf_students_t(first.n()+second.n()-2, t));
     double mean = (first.mean()*first.n()+second.mean()*second.n())/(first.n()+second.n());
+    if (loud)
+	std::cout << "Test of common mean: H_0" << MU << ": " << MU << sub(1) << " = " << MU << sub(2) <<
+	std::endl << "t(x) = (" << MU << sub(1) << " - " << MU << sub(2) << ")/sqrt(s" << SQ << "*(1/n" << sub(1) << " + 1/n" << sub(2) << "))" <<
+	std::endl << "     = (" << first.mean() << " - " << second.mean() << ")/sqrt(" << variance << "*(1/" << first.n() << " + 1/" << second.n() << "))" <<
+	std::endl << "     = " << t << " ~~ t(f1) = t(" << first.n()+second.n()-2 << ")" <<
+	std::endl << "p_obs = " << p_obs <<
+	std::endl << "(biogeostat p. 83)" << std::endl;
     return std::make_pair(mean, p_obs);
 }
 

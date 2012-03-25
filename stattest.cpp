@@ -81,6 +81,10 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
 }
 
 vector<normal_sample> get_observations() {
+    cout << "Input sample observations." <<
+    endl << "Separate samples with blank lines, end with " << eof_keystroke << "." <<
+    endl;
+
     vector<normal_sample> samples;
     normal_sample xs;
     string line;
@@ -102,6 +106,12 @@ vector<normal_sample> get_observations() {
 }
 
 vector<normal_sample> get_input() {
+    cout << "Input cumulative sample data." <<
+    endl << "n is the number of observations, S is the sum of observations," <<
+    endl << "USS is the sum of the squares of the observations." <<
+    endl << "End with " << eof_keystroke << '.' <<
+    endl;
+
     vector<normal_sample> samples;
     normal_sample xs;
     size_t i = 1;
@@ -128,7 +138,7 @@ void go(vector<normal_sample> samples) {
 }
 
 int main(int argc, char ** argv) {
-    cout << git_commit << ' ' << git_refspec << endl;
+    cout << "This is stattest built from " << git_refspec << " (commit " << git_commit << ")" << endl << endl;
     bool observations = false;
     if (argc > 1 && string(argv[1]) == "--obs")
 	observations = true;

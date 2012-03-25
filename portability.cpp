@@ -4,6 +4,8 @@
 
 #ifdef WIN32
 
+#include <windows.h>
+
 bool is_interactive() {
     return true;
 }
@@ -12,8 +14,7 @@ const char * eof_keystroke = "Ctrl-Z, enter";
 
 void display_results() {
     std::cout << "Bye bye." << std::endl;
-    std::string line;
-    std::getline(std::cin, line);
+    Sleep(INFINITE);
 }
 
 #else

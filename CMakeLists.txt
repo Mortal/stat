@@ -5,9 +5,6 @@ project(stat)
 if(NOT WIN32) 
 	add_definitions("-Wall -Wextra -std=c++0x")
 endif(NOT WIN32)
-if(NOT WIN32) 
-	add_definitions("-DASCII")
-endif(NOT WIN32)
 
 if(WIN32)
 	set(Boost_USE_STATIC_LIBS    ON)
@@ -31,3 +28,7 @@ add_executable(stattest
   "${CMAKE_CURRENT_BINARY_DIR}/sysinfo.cpp" sysinfo.h)
 
 #target_link_libraries(stattest ${Boost_LIBRARIES})
+
+if(WIN32) 
+	set_property(TARGET stattest PROPERTY COMPILE_DEFINITIONS ASCII)
+endif(WIN32)

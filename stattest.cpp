@@ -274,18 +274,18 @@ void go_calculate() {
 
 void go_linear_parameter_ci() {
     double param;
-    double stderr;
+    double stderror;
     size_t f;
     cout << "Parameter estimate: " << flush;
     if (!(cin >> param)) return;
     cout << "Standard error: " << flush;
-    if (!(cin >> stderr)) return;
+    if (!(cin >> stderror)) return;
     cout << "Degrees of freedom: " << flush;
     if (!(cin >> f)) return;
-    double d = stderr * quantile_students_t(f, param);
+    double d = stderror * quantile_students_t(f, 0.975);
     cout << "The limits of the confidence interval are" <<
     endl << "    Estimate +- Standard Error * t_(0.975)(f)" <<
-    endl << "  = " << param << " +- " << stderr << " * " << quantile_students_t(f, param) <<
+    endl << "  = " << param << " +- " << stderror << " * " << quantile_students_t(f, 0.975) <<
     endl << "In other words, the confidence interval is" <<
     endl << "    [" << param-d << ", " << param+d << "]" << endl;
 }

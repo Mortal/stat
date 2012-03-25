@@ -25,6 +25,7 @@ add_executable(stattest
   stattest.cpp
   stat.cpp stat.h
   portability.cpp portability.h
+  distributions.cpp distributions.h
   "${CMAKE_CURRENT_BINARY_DIR}/sysinfo.cpp" sysinfo.h)
 
 #target_link_libraries(stattest ${Boost_LIBRARIES})

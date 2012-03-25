@@ -1,10 +1,9 @@
-#include <boost/math/distributions/students_t.hpp>
-#include <boost/math/distributions/fisher_f.hpp>
-#include <boost/math/distributions/chi_squared.hpp>
 #include <sstream>
 #include <limits>
+#include <iostream>
 
 #include "stat.h"
+#include "distributions.h"
 
 std::string long_subscript(size_t i) {
     std::stringstream ss;
@@ -33,17 +32,15 @@ std::string sub(std::string s) {
 // Confidence interval for the mean. biogeostat p. 61
 ci_t normal_sample::ci(double alpha) const {
     if (freedom() < 2) return std::make_pair(-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
-    boost::math::students_t dist(static_cast<double>(freedom()));
-    double T = quantile(complement(dist, alpha / 2));
+    double T = quantile_students_t(freedom(), 1 - alpha / 2);
     double w = T * stddev() / sqrt(static_cast<double>(n()));
     return std::make_pair(mean() - w, mean() + w);
 }
 
 // Confidence interval for the variance. biogeostat p. 62
 ci_t normal_sample::ci_variance(double alpha, bool loud) const {
-    boost::math::chi_squared_distribution<double> dist(static_cast<double>(freedom()));
-    double left_quantile = quantile(dist, 1-alpha/2);
-    double right_quantile = quantile(dist, alpha/2);
+    double left_quantile = quantile_chi_squared(freedom(), 1-alpha/2);
+    double right_quantile = quantile_chi_squared(freedom(), alpha/2);
     double nominator = freedom()*variance();
     double lhs = freedom()*variance()/left_quantile;
     double rhs = freedom()*variance()/right_quantile;
@@ -58,8 +55,9 @@ double common_variance(double var_x, double var_y, size_t freedom_x, size_t free
     if (var_x < var_y) return common_variance(var_y, var_x, freedom_y, freedom_x, loud);
     if (loud) std::cout << "Test of common variance:" << std::endl;
     double F = var_x / var_y;
+    // TODO: how is this calculated? page ref
     if (loud) std::cout << "Test statistic: F = " << F << std::endl;
-    double cdf = 1-boost::math::cdf(boost::math::fisher_f(static_cast<double>(freedom_x), static_cast<double>(freedom_y)), F);
+    double cdf = 1-cdf_fisher_f(freedom_x, freedom_y, F);
     double p_obs = 2*cdf;
     if (loud) std::cout << "p_obs = 2*(1-F_(F(" << freedom_x << ", " << freedom_y << ")) (F)) = " << p_obs << std::endl;
     return p_obs;
@@ -69,7 +67,7 @@ std::pair<double, double> common_mean(const normal_sample & first, const normal_
     if (first.mean() < second.mean()) return common_mean(second, first);
     double variance = common_variance(first, second, false).first;
     double t = (first.mean() - second.mean())/sqrt(variance*(1.0/first.n() + 1.0/second.n()));
-    double p_obs = 2*(1-boost::math::cdf(boost::math::students_t(static_cast<double>(first.n()+second.n()-2)), t));
+    double p_obs = 2*(1-cdf_students_t(first.n()+second.n()-2, t));
     double mean = (first.mean()*first.n()+second.mean()*second.n())/(first.n()+second.n());
     return std::make_pair(mean, p_obs);
 }
@@ -95,7 +93,7 @@ std::pair<double, double> common_variance(const std::vector<normal_sample> & sam
     const double test_statistic = f1 * log(ss1) - teststatsum;
     const double Ba = test_statistic / C;
 
-    const double p_obs = 1-boost::math::cdf(boost::math::chi_squared(static_cast<double>(k-1)), Ba);
+    const double p_obs = 1-cdf_chi_squared(k-1, Ba);
 
     if (loud) std::cout << "s" << sub(1) << SQ" = SSD" << sub(1) << " / f" << sub(1) << " = " << ss1 << std::endl
 	   << std::endl << "-2 ln Q(x) = f" << sub(1) << " ln(s" << sub(1) << SQ") - sum_(i=1)^k f_(i) ln s_(i)"SQ
@@ -126,7 +124,7 @@ std::pair<double, double> common_mean(const std::vector<normal_sample> & samples
     const double ss2 = ssd2 / (k-1);
     const double F = ss2 / ss1;
     //const double Q = pow(1.0/(1.0 + ssd2 / sum.ssd()), sum.n()/2.0);
-    const double p_obs = 1-boost::math::cdf(boost::math::fisher_f(static_cast<double>(k-1), static_cast<double>(sum.n()-k)), F);
+    const double p_obs = 1-cdf_fisher_f(k-1, sum.n()-k, F);
 
     if (loud) 
 	std::cout << "Testing the hypothesis of a common mean in more than two samples." <<

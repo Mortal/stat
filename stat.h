@@ -1,5 +1,6 @@
 #include <string>
 #include <cmath>
+#include <vector>
 
 #ifndef ASCII
 #   define SQ "\xC2\xB2"

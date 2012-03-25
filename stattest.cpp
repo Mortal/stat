@@ -205,7 +205,7 @@ operation get_operation(int argc, char ** argv) {
 }
 
 int main(int argc, char ** argv) {
-    cout << "This is stattest built from " << git_refspec << " (commit " << git_commit << ")" << endl << endl;
+    cout << "This is stattest built from " << git_refspec << "\n(commit " << git_commit << ")" << endl << endl;
     operation o = get_operation(argc, argv);
 
     if (o.variance)

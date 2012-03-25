@@ -26,9 +26,13 @@ void derive(const normal_sample & xs, string index = "") {
     string ssd = "SSD" + index;
     string uss = "USS" + index;
     string var = "s" + index + SQ;
-    cout << "Mean:         " << mu << " = " << sum << " / " << n << " = " << xs.sum() << " / " << xs.n() << " = " << xs.mean() <<
+    string sigma = SIGMA + index + SQ;
+    cout << "Mean:         " << mu << " = " << sum << " / " << n << " = " << xs.sum() << " / " << xs.n() << " = " << xs.mean() << " ~~ N(" << mu << ", " << sigma << "/n)" <<
+    endl << "CI for mean: " << xs.ci() <<
     endl << "             " << ssd << " = " << uss << " - " << sum << SQ" / " << n << " = " << xs.uss() << " - " << xs.sum() << SQ" / " << xs.n() << " = " << xs.ssd() <<
-    endl << "Variance:    " << var << " = 1 / (" << n << " - 1) * " << ssd << " = " << xs.variance() << endl;
+    endl << "Variance:    " << var << " = 1 / (" << n << " - 1) * " << ssd << " = " << xs.variance() <<
+    endl << "CI for var.: " << xs.ci_variance() <<
+    endl;
 }
 
 void more_than_two_samples(vector<normal_sample> & samples) {
@@ -74,28 +78,58 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
     }
 }
 
-void go() {
+vector<normal_sample> get_observations() {
+    vector<normal_sample> samples;
+    normal_sample xs;
+    string line;
+    while (getline(cin, line)) {
+	stringstream ss(line);
+	size_t seen = 0;
+	double observation;
+	while (ss >> observation) {
+	    ++seen;
+	    xs(observation);
+	}
+	if (!seen) {
+	    samples.push_back(xs);
+	    xs = normal_sample();
+	}
+    }
+    if (xs.n()) samples.push_back(xs);
+    return samples;
+}
+
+vector<normal_sample> get_input() {
     vector<normal_sample> samples;
     normal_sample xs;
     size_t i = 1;
     bool prompt = isatty(0);
     while (read_cumulative_sample_data(xs, i, prompt)) {
-	stringstream ss;
-	ss << char_subscript('(') << sub(i) << char_subscript(')');
 	samples.push_back(xs);
-	derive(xs, ss.str());
-	cout << endl;
 	++i;
     }
+    return samples;
+}
+
+void go(vector<normal_sample> samples) {
     size_t k = samples.size();
+    for (size_t i = 0; i < k; ++i) {
+	stringstream ss;
+	ss << char_subscript('(') << sub(1+i) << char_subscript(')');
+	derive(samples[i], ss.str());
+	cout << endl;
+    }
     cout << "Model M" << sub(0) << ": X_ij = N("MU"_i, "SIGMA"_i"SQ") for i = 1, ..., " << k << ", j = 1, ..., n_i" << endl;
     if (samples.size() < 2) return;
     if (samples.size() == 2) return two_samples(samples[0], samples[1]);
     return more_than_two_samples(samples);
 }
 
-int main() {
-    go();
+int main(int argc, char ** argv) {
+    bool observations = false;
+    if (argc > 1 && string(argv[1]) == "--obs")
+	observations = true;
+    go(observations ? get_observations() : get_input());
     return 0;
 }
 // vim: set sw=4 sts=4 ts=8 noet:

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "portability.h"
 
 #ifdef WIN32

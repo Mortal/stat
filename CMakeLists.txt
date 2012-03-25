@@ -16,4 +16,4 @@ find_package(Boost REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 
-add_executable(stattest ALL stattest.cpp stat.cpp stat.h)
+add_executable(stattest stattest.cpp stat.cpp stat.h)

@@ -147,6 +147,7 @@ int main(int argc, char ** argv) {
     if (argc > 1 && string(argv[1]) == "--obs")
 	observations = true;
     go(observations ? get_observations() : get_input());
+    display_results();
     return 0;
 }
 // vim: set sw=4 sts=4 ts=8 noet:

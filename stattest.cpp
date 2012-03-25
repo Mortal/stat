@@ -170,10 +170,11 @@ void go_variance(bool prompt) {
 }
 
 struct operation {
-    operation() : observations(false), variance(false), calculate(false) {}
+    operation() : observations(false), variance(false), calculate(false), linear_parameter_ci(false) {}
     bool observations;
     bool variance;
     bool calculate;
+    bool linear_parameter_ci;
 };
 
 operation get_operation(int argc, char ** argv) {
@@ -193,13 +194,15 @@ operation get_operation(int argc, char ** argv) {
 	endl << "  3. Test common variance in two samples" <<
 	endl << "     given the observed variance and number of degrees of freedom." <<
 	endl << "  4. Lookup distribution fractiles and CDF." << endl <<
-	endl << "Choose one [1234]: " << flush;
+	endl << "  5. Confidence interval for parameters in the linear regression model" <<
+	endl << "     (biogeostat p. 130 and p. 145)." << endl <<
+	endl << "Choose one [12345]: " << flush;
 	size_t modus = 1;
 	string line;
 	if (getline(cin, line)) {
 	    stringstream ss(line);
 	    ss >> modus;
-	    if (modus < 1 || modus > 4) {
+	    if (modus < 1 || modus > 5) {
 		cout << "Modus out of bounds";
 		modus = 1;
 	    }
@@ -213,6 +216,9 @@ operation get_operation(int argc, char ** argv) {
 		break;
 	    case 4:
 		result.calculate = true;
+		break;
+	    case 5:
+		result.linear_parameter_ci = true;
 	}
     }
     return result;
@@ -266,6 +272,24 @@ void go_calculate() {
     }
 }
 
+void go_linear_parameter_ci() {
+    double param;
+    double stderr;
+    size_t f;
+    cout << "Parameter estimate: " << flush;
+    if (!(cin >> param)) return;
+    cout << "Standard error: " << flush;
+    if (!(cin >> stderr)) return;
+    cout << "Degrees of freedom: " << flush;
+    if (!(cin >> f)) return;
+    double d = stderr * quantile_students_t(f, param);
+    cout << "The limits of the confidence interval are" <<
+    endl << "    Estimate +- Standard Error * t_(0.975)(f)" <<
+    endl << "  = " << param << " +- " << stderr << " * " << quantile_students_t(f, param) <<
+    endl << "In other words, the confidence interval is" <<
+    endl << "    [" << param-d << ", " << param+d << "]" << endl;
+}
+
 int main(int argc, char ** argv) {
     cout << "This is stattest built from " << git_refspec << "\n(commit " << git_commit << ")" << endl << endl;
     operation o = get_operation(argc, argv);
@@ -274,6 +298,8 @@ int main(int argc, char ** argv) {
 	go_variance(is_interactive());
     else if (o.calculate)
 	go_calculate();
+    else if (o.linear_parameter_ci)
+	go_linear_parameter_ci();
     else
 	go(o.observations ? get_observations(is_interactive()) : get_input(is_interactive()));
 

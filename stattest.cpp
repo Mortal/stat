@@ -305,21 +305,17 @@ void go_linear_parameter_ci() {
 }
 
 int main(int argc, char ** argv) {
-    bool repeat = is_interactive();
-
     cout << "This is stattest " << git_refspec << "\n(commit " << git_commit << ")" << endl << endl;
-    do {
-	operation o = get_operation(argc, argv);
+    operation o = get_operation(argc, argv);
 
-	if (o.variance)
-	    go_variance(is_interactive());
-	else if (o.calculate)
-	    go_calculate();
-	else if (o.linear_parameter_ci)
-	    go_linear_parameter_ci();
-	else
-	    go(o.observations ? get_observations(is_interactive()) : get_input(is_interactive()));
-    } while (repeat);
+    if (o.variance)
+	go_variance(is_interactive());
+    else if (o.calculate)
+	go_calculate();
+    else if (o.linear_parameter_ci)
+	go_linear_parameter_ci();
+    else
+	go(o.observations ? get_observations(is_interactive()) : get_input(is_interactive()));
 
     display_results();
     return 0;

@@ -307,7 +307,7 @@ void go_linear_parameter_ci() {
 int main(int argc, char ** argv) {
     bool repeat = is_interactive();
 
-    cout << "This is stattest built from " << git_refspec << "\n(commit " << git_commit << ")" << endl << endl;
+    cout << "This is stattest " << git_refspec << "\n(commit " << git_commit << ")" << endl << endl;
     do {
 	operation o = get_operation(argc, argv);
 

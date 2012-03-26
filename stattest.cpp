@@ -30,10 +30,22 @@ void derive(const normal_sample & xs, string index = "") {
     string uss = "USS" + index;
     string var = "s" + index + SQ;
     string sigma = SIGMA + index + SQ;
-    cout << "Mean:         " << mu << " = " << sum << " / " << n << " = " << xs.sum() << " / " << xs.n() << " = " << xs.mean() << " ~~ N(" << mu << ", " << sigma << "/n)" <<
-    endl << "CI for mean: " << xs.ci() <<
-    endl << "             " << ssd << " = " << uss << " - " << sum << SQ" / " << n << " = " << xs.uss() << " - " << xs.sum() << SQ" / " << xs.n() << " = " << xs.ssd() <<
-    endl << "Variance:    " << var << " = 1 / (" << n << " - 1) * " << ssd << " = " << xs.variance() <<
+    cout << "Mean:" <<
+    endl << mu<<" <- " << sum << " / " << n << "   (3.1 p. 55)" <<
+    endl << "      = " << xs.sum() << " / " << xs.n() <<
+    endl << "      = " << xs.mean() << "     ~~ N(" << mu << ", " << sigma << "/n)    (3.3 p. 55)" << endl <<
+
+    endl << "Confidence interval for mean:" <<
+    endl << "C_95%(" << mu << ") = " << xs.ci() << "    (3.23 p. 63)" << endl <<
+
+    endl << "Sum of squares of deviations:" <<
+    endl << ssd <<" = " << uss << " - " << sum << SQ" / " << n << "   (3.25 p. 64)" <<
+    endl << "       = " << xs.uss() << " - " << xs.sum() << SQ" / " << xs.n() << " = " << xs.ssd() << endl <<
+
+    endl << "Variance:" <<
+    endl << var<<" = 1 / (" << n << " - 1) * " << ssd << "  (3.24 p. 64)" <<
+    endl << "      = " << xs.variance() << endl <<
+
     endl;
     xs.ci_variance();
 }

@@ -46,8 +46,8 @@ ci_t normal_sample::ci_variance(double alpha, bool loud) const {
     double lhs = freedom()*variance()/left_quantile;
     double rhs = freedom()*variance()/right_quantile;
     std::cout << "Confidence interval for the variance:" <<
-    std::endl << "C_" << std::setprecision(0) << (100*(1-alpha)) << "%(" << SIGMASQ << ") = [fs_(1)^2 / chi^2_0.975(f), fs_(1)^2 / chi^2_0.025(f)]   (3.15 p. 61)" <<
-    std::endl << "= [" << freedom() << "*" << variance() << "/" << left_quantile << "," <<
+    std::endl << "C_" << std::fixed << std::setprecision(0) << (100*(1-alpha)) << "%(" << SIGMASQ << ") = [fs_(1)^2 / chi^2_0.975(f), fs_(1)^2 / chi^2_0.025(f)]   (3.15 p. 61)" <<
+    std::endl << "= [" << std::setprecision(6) << freedom() << "*" << variance() << "/" << left_quantile << "," <<
     freedom() << "*" << variance() << "/" << right_quantile << "]" <<
     std::endl << "= [" << lhs << ", " << rhs << "]" << std::endl;
     return std::make_pair(lhs, rhs);

@@ -69,6 +69,7 @@ void more_than_two_samples(vector<normal_sample> & samples) {
 	    cout << "Model M" << sub(2) << ": X_ij ~ N("MU", "SIGMASQ")" << endl;
 	    cout << "Single sample data: " << setprecision(6) << zs << endl;
 	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
+	    cout << "95% confidence interval for the variance: " << setprecision(5) << zs.ci_variance() << '\n';
 	}
     }
 }
@@ -92,6 +93,7 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
 	    cout << MU" <- m = " << m.first << "\n\n";
 	    cout << "Single sample data: " << zs << endl;
 	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
+	    cout << "95% confidence interval for the variance: " << setprecision(5) << zs.ci_variance() << '\n';
 	}
     }
 }

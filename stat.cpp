@@ -107,15 +107,15 @@ std::pair<double, double> common_variance(const std::vector<normal_sample> & sam
 
     const double p_obs = 1-cdf_chi_squared(k-1, Ba);
 
-    if (loud) std::cout << "s" << sub(1) << SQ" = SSD" << sub(1) << " / f" << sub(1) << " = " << ss1 << std::endl
-	   << std::endl << "-2 ln Q(x) = f" << sub(1) << " ln(s" << sub(1) << SQ") - sum_(i=1)^k f_(i) ln s_(i)"SQ
-	   << std::endl << "           = " << f1 << " ln(" << ss1 << ") - sum_(i=1)^" << k << " f_(i) ln s_(i)"SQ
+    if (loud) std::cout << "s" << sub(1) << SQ << " = SSD" << sub(1) << " / f" << sub(1) << " = " << ss1 << std::endl
+	   << std::endl << "-2 ln Q(x) = f" << sub(1) << " ln(s" << sub(1) << SQ << ") - sum_(i=1)^k f_(i) ln s_(i)" << SQ
+	   << std::endl << "           = " << f1 << " ln(" << ss1 << ") - sum_(i=1)^" << k << " f_(i) ln s_(i)" << SQ
 	   << std::endl << "           = " << test_statistic << std::endl
 	   << std::endl << "C = 1 + 1/(3*(k-1))*[(sum_(i=1)^k 1/f_(i)) - 1/f" << sub(1) << "]"
 	   << std::endl << "  = 1 + 1/" << (3*k-1) << "*[(sum_(i=1)^" << k << " 1/f_(i)) - 1/" << f1 << "]"
 	   << std::endl << "  = " << C << std::endl
 	   << std::endl << "Ba = -2 ln Q(x) / C = " << Ba << std::endl
-	   << std::endl << "p_obs = 1 - F_("CHISQ"(k-1))(Ba) = " << p_obs << std::endl << std::endl;
+	   << std::endl << "p_obs = 1 - F_(" << CHISQ << "(k-1))(Ba) = " << p_obs << std::endl << std::endl;
 
     return std::make_pair(ss1, p_obs);
 }
@@ -140,10 +140,10 @@ std::pair<double, double> common_mean(const std::vector<normal_sample> & samples
 
     if (loud) 
 	std::cout << "Testing the hypothesis of a common mean in more than two samples." <<
-	std::endl << "H_0"MU" : "MU << sub("(1)") << " = ... = "MU"_(n) = "MU << std::endl <<
-	std::endl << "SSD" << sub(2) << " = -S."SQ"/n. + sum_(i=1)^k S_i"SQ" / n_i = " << ssd2 <<
-	std::endl << "s" << sub(2) << SQ" = SSD" << sub(2) << " / (k - 1) = " << ss2 <<
-	std::endl << "F(x) = s" << sub(2) << SQ" / s" << sub(1) << SQ" = " << F << " ~~ F(k-1, n.-k)" <<
+	std::endl << "H_0" << MU << " : " << MU << sub("(1)") << " = ... = " << MU << "_(n) = " << MU << std::endl <<
+	std::endl << "SSD" << sub(2) << " = -S." << SQ << "/n. + sum_(i=1)^k S_i" << SQ << " / n_i = " << ssd2 <<
+	std::endl << "s" << sub(2) << SQ << " = SSD" << sub(2) << " / (k - 1) = " << ss2 <<
+	std::endl << "F(x) = s" << sub(2) << SQ << " / s" << sub(1) << SQ << " = " << F << " ~~ F(k-1, n.-k)" <<
 	//std::endl << "(p.102) Q(x) = [1/(1 + SSD_2/SSD_1)]^(n/2) = " << Q <<
 	std::endl << "p_obs(x) = 1-F_(F(k-1, n. - k))(F(x)) = " << p_obs << std::endl;
 

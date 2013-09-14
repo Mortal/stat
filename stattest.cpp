@@ -32,19 +32,19 @@ void derive(const normal_sample & xs, string index = "") {
     string sigma = SIGMA + index + SQ;
     cout << "Mean:" <<
     endl << mu<<" <- " << sum << " / " << n << "   (3.1 p. 55)" <<
-    endl << "      = " << xs.sum() << " / " << xs.n() <<
-    endl << "      = " << xs.mean() << "     ~~ N(" << mu << ", " << sigma << "/n)    (3.3 p. 55)" << endl <<
+    endl << "      = " << F_SAMPLE(xs.sum()) << " / " << xs.n() <<
+    endl << "      = " << F_SAMPLE(xs.mean()) << "     ~~ N(" << mu << ", " << sigma << "/n)    (3.3 p. 55)" << endl <<
 
     endl << "Confidence interval for mean:" <<
     endl << "C_95%(" << mu << ") = " << xs.ci() << "    (3.23 p. 63)" << endl <<
 
     endl << "Sum of squares of deviations:" <<
     endl << ssd <<" = " << uss << " - " << sum << SQ" / " << n << "   (3.25 p. 64)" <<
-    endl << "       = " << xs.uss() << " - " << xs.sum() << SQ" / " << xs.n() << " = " << xs.ssd() << endl <<
+    endl << "       = " << F_SAMPLE_SQ(xs.uss()) << " - " << F_SAMPLE(xs.sum()) << SQ" / " << xs.n() << " = " << F_SAMPLE_SQ(xs.ssd()) << endl <<
 
     endl << "Variance:" <<
     endl << var<<" = 1 / (" << n << " - 1) * " << ssd << "  (3.24 p. 64)" <<
-    endl << "      = " << xs.variance() << endl <<
+    endl << "      = " << F_VARIANCE(xs.variance()) << endl <<
 
     endl;
     xs.ci_variance();
@@ -56,20 +56,20 @@ void more_than_two_samples(vector<normal_sample> & samples) {
     endl << "H_0" << SIGMASQ << " : " << SIGMA << sub("(1)") << SQ << " = ... = " << SIGMA << char_subscript('(') << sub(samples.size()) << char_subscript(')') << SQ << " = " << SIGMASQ << endl;
 
     pair<double,double> v = common_variance(samples);
-    cout << "p_obs = " << fixed << setprecision(2) << v.second*100 << "% => " << ((v.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
+    cout << "p_obs = " << F_P_OBS(v.second*100) << "% => " << ((v.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
     if (v.second >= 0.05) {
-	cout << SIGMASQ << " <- s" << SQ << " = " << setprecision(5) << v.first << "\n\n";
+	cout << SIGMASQ << " <- s" << SQ << " = " << F_SAMPLE_SQ(v.first) << "\n\n";
 	normal_sample zs = normal_sample::sum(samples.begin(), samples.end());
 	cout << "95% confidence interval for the variance (biogeostat p. 104): " << zs.ci_variance() << '\n';
 	cout << endl << string(79, '=') << endl;
 	pair<double, double> m = common_mean(samples);
-	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
+	cout << "p_obs = " << F_P_OBS(m.second*100) << "% => " << ((m.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
 	if (m.second >= 0.05) {
-	    cout << MU << " <- m = " << m.first << "\n\n";
+	    cout << MU << " <- m = " << F_SAMPLE(m.first) << "\n\n";
 	    cout << "Model M" << sub(2) << ": X_ij ~ N(" << MU << ", " << SIGMASQ << ")" << endl;
-	    cout << "Single sample data: " << setprecision(6) << zs << endl;
-	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
-	    cout << "95% confidence interval for the variance: " << setprecision(5) << zs.ci_variance() << '\n';
+	    cout << "Single sample data: " << zs << endl;
+	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << zs.ci() << '\n';
+	    cout << "95% confidence interval for the variance: " << zs.ci_variance() << '\n';
 	}
     }
 }
@@ -80,20 +80,20 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
     endl << "H_0" << SIGMASQ << " : " << SIGMA << sub("(1)") << SQ << " = " << SIGMA << sub("(2)") << SQ << " = " << SIGMASQ << endl;
 
     pair<double,double> v = common_variance(xs, ys);
-    cout << "p_obs = " << fixed << setprecision(2) << v.second*100 << "% => " << ((v.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
+    cout << "p_obs = " << F_P_OBS(v.second*100) << "% => " << ((v.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
     if (v.second >= 0.05) {
 	cout << "Model M" << sub(1) << ": X_ij = N(" << MU << "_i, " << SIGMASQ << ") for i = 1, ..., n, j = 1, ..., n_i" << endl;
-	cout << SIGMASQ << " <- s" << SQ << " = " << setprecision(5) << v.first << "\n\n";
+	cout << SIGMASQ << " <- s" << SQ << " = " << F_SAMPLE_SQ(v.first) << "\n\n";
 	normal_samples zs = xs+ys;
-	cout << "95% confidence interval for the variance (biogeostat p. 61): " << setprecision(5) << zs.ci_variance() << '\n';
+	cout << "95% confidence interval for the variance (biogeostat p. 61): " << zs.ci_variance() << '\n';
 	cout << endl << string(79, '=') << endl;
 	pair<double,double> m = common_mean(xs, ys);
-	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
+	cout << "p_obs = " << F_P_OBS(m.second*100) << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
 	if (m.second >= 0.05) {
 	    cout << MU << " <- m = " << m.first << "\n\n";
 	    cout << "Single sample data: " << zs << endl;
-	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
-	    cout << "95% confidence interval for the variance: " << setprecision(5) << zs.ci_variance() << '\n';
+	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << zs.ci() << '\n';
+	    cout << "95% confidence interval for the variance: " << zs.ci_variance() << '\n';
 	}
     }
 }
@@ -282,7 +282,7 @@ void go_calculate() {
 	    default:
 		return;
 	}
-	cout << fixed << setprecision(7) << result << endl;
+	cout << F_TEST_STAT(result) << endl;
     }
 }
 

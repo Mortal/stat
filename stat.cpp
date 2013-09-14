@@ -46,10 +46,10 @@ ci_t normal_sample::ci_variance(double alpha, bool loud) const {
     double lhs = freedom()*variance()/left_quantile;
     double rhs = freedom()*variance()/right_quantile;
     std::cout << "Confidence interval for the variance:" <<
-    std::endl << "C_" << std::fixed << std::setprecision(0) << (100*(1-alpha)) << "%(" << SIGMASQ << ") = [fs_(1)^2 / chi^2_0.975(f), fs_(1)^2 / chi^2_0.025(f)]   (3.15 p. 61)" <<
-    std::endl << "= [" << std::setprecision(6) << freedom() << "*" << variance() << "/" << left_quantile << "," <<
-    freedom() << "*" << variance() << "/" << right_quantile << "]" <<
-    std::endl << "= [" << lhs << ", " << rhs << "]" << std::endl;
+    std::endl << "C_" << F_PERCENTAGE(100*(1-alpha)) << "%(" << SIGMASQ << ") = [fs_(1)^2 / chi^2_0.975(f), fs_(1)^2 / chi^2_0.025(f)]   (3.15 p. 61)" <<
+    std::endl << "= [" << F_FREEDOM(freedom()) << "*" << F_VARIANCE(variance()) << "/" << F_CHI_SQ(left_quantile) << "," <<
+    F_FREEDOM(freedom()) << "*" << F_VARIANCE(variance()) << "/" << F_CHI_SQ(right_quantile) << "]" <<
+    std::endl << "= [" << F_VARIANCE(lhs) << ", " << F_VARIANCE(rhs) << "]" << std::endl;
     return std::make_pair(lhs, rhs);
 }
 
@@ -59,12 +59,12 @@ double common_variance(double var_x, double var_y, size_t freedom_x, size_t free
     if (loud)
 	std::cout << "Test of common variance: H_0" << SIGMASQ << ": " << SIGMASQ << sub(1) << " = " << SIGMASQ << sub(2) <<
 	std::endl << "F = s" << sub(1) << SQ << "/s" << sub(2) << SQ << " (biogeostat p. 87)" <<
-	std::endl << "  = " << var_x << "/" << var_y << " = " << F <<
+	std::endl << "  = " << F_VARIANCE(var_x) << "/" << F_VARIANCE(var_y) << " = " << F_F_STAT(F) <<
 	std::endl;
-    if (loud) std::cout << "Test statistic: F = " << F << std::endl;
+    if (loud) std::cout << "Test statistic: F = " << F_F_STAT(F) << std::endl;
     double cdf = 1-cdf_fisher_f(freedom_x, freedom_y, F);
     double p_obs = 2*cdf;
-    if (loud) std::cout << "p_obs = 2*(1-F_(F(" << freedom_x << ", " << freedom_y << ")) (F)) = " << p_obs << std::endl;
+    if (loud) std::cout << "p_obs = 2*(1-F_(F(" << F_FREEDOM(freedom_x) << ", " << F_FREEDOM(freedom_y) << ")) (F)) = " << F_P_OBS(p_obs) << std::endl;
     return p_obs;
 }
 
@@ -77,9 +77,9 @@ std::pair<double, double> common_mean(const normal_sample & first, const normal_
     if (loud)
 	std::cout << "Test of common mean: H_0" << MU << ": " << MU << sub(1) << " = " << MU << sub(2) <<
 	std::endl << "t(x) = (" << MU << sub(1) << " - " << MU << sub(2) << ")/sqrt(s" << SQ << "*(1/n" << sub(1) << " + 1/n" << sub(2) << "))" <<
-	std::endl << "     = (" << first.mean() << " - " << second.mean() << ")/sqrt(" << variance << "*(1/" << first.n() << " + 1/" << second.n() << "))" <<
-	std::endl << "     = " << t << " ~~ t(f1) = t(" << first.n()+second.n()-2 << ")" <<
-	std::endl << "p_obs = " << p_obs <<
+	std::endl << "     = (" << F_SAMPLE(first.mean()) << " - " << F_SAMPLE(second.mean()) << ")/sqrt(" << F_VARIANCE(variance) << "*(1/" << F_N(first.n()) << " + 1/" << F_N(second.n()) << "))" <<
+	std::endl << "     = " << F_T(t) << " ~~ t(f1) = t(" << first.n()+second.n()-2 << ")" <<
+	std::endl << "p_obs = " << F_P_OBS(p_obs) <<
 	std::endl << "(biogeostat p. 83)" << std::endl;
     return std::make_pair(mean, p_obs);
 }
@@ -109,13 +109,13 @@ std::pair<double, double> common_variance(const std::vector<normal_sample> & sam
 
     if (loud) std::cout << "s" << sub(1) << SQ << " = SSD" << sub(1) << " / f" << sub(1) << " = " << ss1 << std::endl
 	   << std::endl << "-2 ln Q(x) = f" << sub(1) << " ln(s" << sub(1) << SQ << ") - sum_(i=1)^k f_(i) ln s_(i)" << SQ
-	   << std::endl << "           = " << f1 << " ln(" << ss1 << ") - sum_(i=1)^" << k << " f_(i) ln s_(i)" << SQ
-	   << std::endl << "           = " << test_statistic << std::endl
+	   << std::endl << "           = " << f1 << " ln(" << F_SAMPLE_SQ(ss1) << ") - sum_(i=1)^" << k << " f_(i) ln s_(i)" << SQ
+	   << std::endl << "           = " << F_TEST_STAT(test_statistic) << std::endl
 	   << std::endl << "C = 1 + 1/(3*(k-1))*[(sum_(i=1)^k 1/f_(i)) - 1/f" << sub(1) << "]"
 	   << std::endl << "  = 1 + 1/" << (3*k-1) << "*[(sum_(i=1)^" << k << " 1/f_(i)) - 1/" << f1 << "]"
-	   << std::endl << "  = " << C << std::endl
-	   << std::endl << "Ba = -2 ln Q(x) / C = " << Ba << std::endl
-	   << std::endl << "p_obs = 1 - F_(" << CHISQ << "(k-1))(Ba) = " << p_obs << std::endl << std::endl;
+	   << std::endl << "  = " << F_TEST_STAT(C) << std::endl
+	   << std::endl << "Ba = -2 ln Q(x) / C = " << F_TEST_STAT(Ba) << std::endl
+	   << std::endl << "p_obs = 1 - F_(" << CHISQ << "(k-1))(Ba) = " << F_P_OBS(p_obs) << std::endl << std::endl;
 
     return std::make_pair(ss1, p_obs);
 }
@@ -143,9 +143,9 @@ std::pair<double, double> common_mean(const std::vector<normal_sample> & samples
 	std::endl << "H_0" << MU << " : " << MU << sub("(1)") << " = ... = " << MU << "_(n) = " << MU << std::endl <<
 	std::endl << "SSD" << sub(2) << " = -S." << SQ << "/n. + sum_(i=1)^k S_i" << SQ << " / n_i = " << ssd2 <<
 	std::endl << "s" << sub(2) << SQ << " = SSD" << sub(2) << " / (k - 1) = " << ss2 <<
-	std::endl << "F(x) = s" << sub(2) << SQ << " / s" << sub(1) << SQ << " = " << F << " ~~ F(k-1, n.-k)" <<
+	std::endl << "F(x) = s" << sub(2) << SQ << " / s" << sub(1) << SQ << " = " << F_TEST_STAT(F) << " ~~ F(k-1, n.-k)" <<
 	//std::endl << "(p.102) Q(x) = [1/(1 + SSD_2/SSD_1)]^(n/2) = " << Q <<
-	std::endl << "p_obs(x) = 1-F_(F(k-1, n. - k))(F(x)) = " << p_obs << std::endl;
+	std::endl << "p_obs(x) = 1-F_(F(k-1, n. - k))(F(x)) = " << F_P_OBS(p_obs) << std::endl;
 
     return std::make_pair(sum.mean(), p_obs);
 }

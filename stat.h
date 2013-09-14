@@ -1,6 +1,7 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include "format.h"
 
 #ifndef ASCII
 #   define SQ "\xC2\xB2"
@@ -64,7 +65,7 @@ struct ci_t {
 };
 
 inline std::ostream & operator<<(std::ostream & os, const ci_t & ci) {
-    return os << '[' << ci.first << ',' << ci.second << ']';
+    return os << '[' << F_SAMPLE(ci.first) << ',' << F_SAMPLE(ci.second) << ']';
 }
 
 struct normal_sample {
@@ -162,6 +163,6 @@ std::pair<double, double> common_mean(const std::vector<normal_sample> & samples
 typedef normal_sample normal_samples;
 
 inline std::ostream & operator<<(std::ostream & os, const normal_sample & ns) {
-    return os << "[Normal samples with n = " << ns.n() << ", mean = " << ns.mean() << ", m2 = " << ns.m2() << ", stddev = " << ns.stddev() << ", var = " << ns.variance() << ']';
+    return os << "[Normal samples with n = " << ns.n() << ", mean = " << F_SAMPLE(ns.mean()) << ", m2 = " << F_SAMPLE_SQ(ns.m2()) << ", stddev = " << F_STDDEV(ns.stddev()) << ", var = " << F_VARIANCE(ns.variance()) << ']';
 }
 // vim: set sw=4 sts=4 ts=8 noet:
